@@ -57,3 +57,5 @@ Since this project was built rapidly as a hackathon proof-of-concept, there are 
 - **Pagination Support:** If the timeframe is extremely large and returns more results than the API limit per request, pagination cursor handling must be implemented.
 - **Modern UI Framework:** Migrate from `tkinter` to a modern web app (e.g., React/Next.js) or a cross-platform desktop framework (e.g., Electron, Tauri, PyQt) for a richer, more polished UI.
 - **Robust Error Handling & Retries:** Improve API error handling with automatic retry logic for network timeouts or rate limits, and provide more descriptive, user-friendly error messages in the GUI.
+- **Calendar sync (live updates):** Convert static .ics download into a subscribed calendar feed (live sync via URL)
+  
