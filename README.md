@@ -2,6 +2,9 @@
 
 A proof-of-concept desktop application built with Python and `tkinter`, aimed at extracting university schedules from the MyHud website (via MyDay API) and exporting them into `.ics` (iCalendar) format.
 
+> [!WARNING]
+> **Security Notice:** The Bearer token used in this application grants full access to your university account via the MyHud API. **Never share this token with anyone, and do not commit it to version control.** It is equivalent to your password.
+>
 ## What it does
 
 This application provides a simple graphical user interface to:
