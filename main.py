@@ -183,10 +183,16 @@ class App:
                     continue
 
                 try:
-                    s = item['Start'].replace("-", "").replace(":", "").split("+")[0] + "Z"
-                    e = item['End'].replace("-", "").replace(":", "").split("+")[0] + "Z"
+                    # THE GENERIC DATE FIX:
+                    # Split at 'T', remove punctuation, and grab exactly 6 characters of time (HHMMSS)
+                    # This safely ignores Zs, +00:00 offsets, -05:00 offsets, and .123 microseconds.
+                    s_date, s_time = item['Start'].split('T')
+                    e_date, e_time = item['End'].split('T')
 
-                    # 1. THE ID FIX: Use native Exchange ID or generate a unique fallback
+                    s = f"{s_date.replace('-', '')}T{s_time.replace(':', '')[:6]}Z"
+                    e = f"{e_date.replace('-', '')}T{e_time.replace(':', '')[:6]}Z"
+
+                    # 1. Use native Exchange ID or generate a unique fallback
                     event_uid = item.get('Id')
                     if not event_uid:
                         event_uid = str(uuid.uuid4())
@@ -199,12 +205,12 @@ class App:
                         f"SUMMARY:{item.get('Subject', 'No Subject')}"
                     ]
 
-                    # 2. OPTIONAL LOCATION: Add it only if the API provided a valid string
+                    # 2. Add Location if provided
                     loc = item.get('Location')
                     if loc:
                         event_lines.append(f"LOCATION:{loc}")
 
-                    # 3. 15-MINUTE ALERT: Standard iCalendar syntax for a reminder
+                    # 3. Add 15-Minute Alert
                     event_lines.extend([
                         "BEGIN:VALARM",
                         "TRIGGER:-PT15M",
@@ -223,7 +229,7 @@ class App:
             lines.append("END:VCALENDAR")
 
             try:
-                # Force UTF-8 encoding to prevent crashes from emojis (like your HUDHACK ticket emoji)
+                # Force UTF-8 encoding for special characters
                 with open(file_path, "w", encoding="utf-8") as f:
                     f.write("\n".join(lines))
                 messagebox.showinfo("Success", "Schedule successfully exported as .ics file!")
