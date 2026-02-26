@@ -11,7 +11,7 @@ ENDPOINT = "https://api.myday.cloud/legacy/api/aggregate/v2/calendaritem"
 class App:
     def __init__(self, root):
         self.root = root
-        self.root.title("MyDay Schedule Extractor")
+        self.root.title("MyHud Schedule Extractor")
         self.root.geometry("750x650")  # Slightly larger to accommodate padding
         self.current_results = []
 
@@ -176,7 +176,7 @@ class App:
 
         file_path = filedialog.asksaveasfilename(defaultextension=".ics", initialfile="uni_schedule.ics")
         if file_path:
-            lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MyDayScraper//EN", "METHOD:PUBLISH"]
+            lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MyHudScraper//EN", "METHOD:PUBLISH"]
             for item in self.current_results:
                 # Basic error checking in case keys are missing
                 if 'Start' not in item or 'End' not in item:
