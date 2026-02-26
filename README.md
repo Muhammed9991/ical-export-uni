@@ -35,7 +35,11 @@ python main.py
 
 ### Usage
 
-1. **Obtain Bearer Token:** You will need a valid Bearer token from the MyHud website. You can extract this from the Network tab in your browser's developer tools when logged in to your university portal.
+1. **Obtain Bearer Token:** You will need a valid Bearer token from the MyHud website. To find this:
+   - Log in to your university portal in your browser.
+   - Right-click anywhere on the page and select **Inspect** (or press F12) to open developer tools.
+   - Navigate to the **Network** tab.
+   - Refresh the page or click around, then look through the requests. Select one and check the **Headers** or **Payload** tab for an `Authorization` (or `Authorisation`) header containing your Bearer token. Copy this token.
 2. **Launch App:** Start the application.
 3. **Configure:** Enter your Bearer token and select a timeframe.
 4. **Fetch:** Click **Fetch Data** to preview your schedule.
