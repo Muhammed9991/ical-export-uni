@@ -178,17 +178,53 @@ class App:
         if file_path:
             lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MyHudScraper//EN", "METHOD:PUBLISH"]
             for item in self.current_results:
-                # Basic error checking in case keys are missing
-                if 'Start' not in item or 'End' not in item:
+                # Safely check that Start and End exist AND are not None
+                if not item.get('Start') or not item.get('End'):
                     continue
-                s = item['Start'].replace("-", "").replace(":", "").split("+")[0] + "Z"
-                e = item['End'].replace("-", "").replace(":", "").split("+")[0] + "Z"
-                lines.extend(["BEGIN:VEVENT", f"UID:{item.get('Id', 'unknown')}", f"DTSTART:{s}", f"DTEND:{e}",
-                              f"SUMMARY:{item.get('Subject', '')}", "END:VEVENT"])
+
+                try:
+                    s = item['Start'].replace("-", "").replace(":", "").split("+")[0] + "Z"
+                    e = item['End'].replace("-", "").replace(":", "").split("+")[0] + "Z"
+
+                    # 1. THE ID FIX: Use native Exchange ID or generate a unique fallback
+                    event_uid = item.get('Id')
+                    if not event_uid:
+                        event_uid = str(uuid.uuid4())
+
+                    event_lines = [
+                        "BEGIN:VEVENT",
+                        f"UID:{event_uid}",
+                        f"DTSTART:{s}",
+                        f"DTEND:{e}",
+                        f"SUMMARY:{item.get('Subject', 'No Subject')}"
+                    ]
+
+                    # 2. OPTIONAL LOCATION: Add it only if the API provided a valid string
+                    loc = item.get('Location')
+                    if loc:
+                        event_lines.append(f"LOCATION:{loc}")
+
+                    # 3. 15-MINUTE ALERT: Standard iCalendar syntax for a reminder
+                    event_lines.extend([
+                        "BEGIN:VALARM",
+                        "TRIGGER:-PT15M",
+                        "ACTION:DISPLAY",
+                        "DESCRIPTION:Reminder",
+                        "END:VALARM",
+                        "END:VEVENT"
+                    ])
+
+                    lines.extend(event_lines)
+
+                except Exception as parse_err:
+                    print(f"Skipped an event due to parsing error: {parse_err}")
+                    continue
+
             lines.append("END:VCALENDAR")
 
             try:
-                with open(file_path, "w") as f:
+                # Force UTF-8 encoding to prevent crashes from emojis (like your HUDHACK ticket emoji)
+                with open(file_path, "w", encoding="utf-8") as f:
                     f.write("\n".join(lines))
                 messagebox.showinfo("Success", "Schedule successfully exported as .ics file!")
                 self.status_label.config(text=f"File saved to {file_path}", fg="green")
