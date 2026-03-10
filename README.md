@@ -59,3 +59,4 @@ Since this project was built rapidly as a hackathon proof-of-concept, there are 
 - **Robust Error Handling & Retries:** Improve API error handling with automatic retry logic for network timeouts or rate limits, and provide more descriptive, user-friendly error messages in the GUI.
 - **Calendar sync (live updates):** Convert static .ics download into a subscribed calendar feed (live sync via URL)
   
+ 
